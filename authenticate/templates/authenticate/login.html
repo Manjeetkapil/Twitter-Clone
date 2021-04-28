@@ -1,0 +1,18 @@
+<div>
+  {% if messages %} {% for message in messages %}
+  <div>{{message}}</div>
+  {% endfor %} {% endif %}
+</div>
+<div class="something">
+  <form method="POST">
+    {% csrf_token %}
+    <fieldset class="df">
+      <legend>Join Today</legend>
+      {{form.as_p}}
+    </fieldset>
+    <div>
+      <button>Log In</button>
+    </div>
+  </form>
+  <div>Need an account? <a href="{% url 'register' %}">Sign Up Now</a></div>
+</div>
