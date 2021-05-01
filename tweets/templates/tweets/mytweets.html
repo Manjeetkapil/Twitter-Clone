@@ -1,0 +1,55 @@
+{%if content.count is 1%}
+<h1 style="text-align: center">
+  Yout Tweet at {%for i in content%} {{i.tweet_time}} {%endfor%}
+</h1>
+{%else%}
+<h1 style="text-align: center">Your Tweets</h1>
+{%endif%}
+<div>
+  {%for i in content%}
+  <fieldset>
+    <legend>{{i.tweeter}}</legend>
+    <h2>Tweet: {{i.tweet}}</h2>
+    {%if content.count is 1%}
+    <h2>Like: {{i.likes}}</h2>
+    <h2>Retweet: {{i.retweets}}</h2>
+    <h2>{{i.tweet_time}}</h2>
+    {%else%}
+    <div style="text-align: center">
+      <p
+        style="
+          display: inline-block;
+          width: fit-content;
+          border-style: groove;
+          border-color: darkslateblue;
+        "
+      >
+        L:{{i.likes}}
+      </p>
+      <p
+        style="
+          display: inline-block;
+          width: fit-content;
+          border-style: groove;
+          border-color: darkslateblue;
+        "
+      >
+        R:{{i.retweets}}
+      </p>
+    </div>
+    {%endif%}
+    <div style="text-align: center">
+      <a href="{%url 'tweetdetail' i.id %}">details</a>
+      <a href="{% url 'edittweet' i.id %}">edit</a>
+    </div>
+  </fieldset>
+  {% endfor %}
+</div>
+<div>
+  {% if messages %} {% for message in messages %}
+  <div>{{message}}</div>
+  {% endfor %} {% endif %}
+</div>
+<div style="border-style: solid; background-color: beige; text-align: center">
+  add new tweet <a href="{%url 'newtweet'%}">here</a>
+</div>

@@ -1,0 +1,16 @@
+<div>
+  <form method="POST">
+    {% csrf_token %}
+    <fieldset>
+      <legend>Add new Tweet</legend>
+
+      {{form.as_p}}
+    </fieldset>
+    <div>
+      <button>Submit</button>
+    </div>
+  </form>
+</div>
+<div>
+  <fieldset>See Your tweets <a href="{%url 'mytweets'%}">here</a></fieldset>
+</div>

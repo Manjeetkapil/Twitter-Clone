@@ -1,0 +1,40 @@
+<fieldset>
+  <legend>
+    <h1>{{content.first_name}} {{content.last_name}}</h1>
+  </legend>
+  {% if follows%}
+  <form action="{%url 'follow_unfollow' puser.username%}" method="POST">
+    {% csrf_token %}
+    <button
+      style="border: none; background-color: rgb(133, 183, 248)"
+      type="submit"
+      name="follows"
+      value="{{follows}}"
+    >
+      Unfollow
+    </button>
+  </form>
+  {%else%}
+  <form action="{%url 'follow_unfollow' puser.username%}" method="POST">
+    {% csrf_token %}
+    <button
+      style="border: none"
+      type="submit"
+      name="follows"
+      value="{{follows}}"
+    >
+      Follow
+    </button>
+  </form>
+  {%endif%}
+  <h2>{{puser.username}}</h2>
+  <h2>{{puser.email}}</h2>
+  <h2>{{content.intro}}</h2>
+  <h2>{{content.age}}</h2>
+  <a href="{%url 'follower' puser.username%}">Followers</a> : {{foer}}
+  <a href="{%url 'following' puser.username%}">Following</a> : {{foing}}
+  <br />
+  {%if puser.username == user.username %}
+  <h2>Edit <a href="{%url 'profile' %}">here</a></h2>
+  {% endif %}
+</fieldset>

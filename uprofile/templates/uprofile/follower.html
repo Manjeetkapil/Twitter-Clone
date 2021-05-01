@@ -1,0 +1,6 @@
+<fieldset>
+  <legend>All followers</legend>
+  {%for i in content%}
+  <a href="{%url 'viewprofile' i.username%}"><h1>{{i.username}}</h1></a>
+  {%endfor%}
+</fieldset>

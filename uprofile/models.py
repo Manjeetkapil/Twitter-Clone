@@ -14,9 +14,6 @@ class Profile(models.Model):
     intro = models.CharField(max_length=30)
     age = models.IntegerField(default=10)
 
-    def __str__(self):
-        return f'{self.first_name} {self.last_name}'
-
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):

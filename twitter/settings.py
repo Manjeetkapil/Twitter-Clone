@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'social.apps.SocialConfig',
+    'tweets.apps.TweetsConfig',
     'uprofile.apps.UprofileConfig',
     'authenticate.apps.AuthenticateConfig',
     'django.contrib.admin',
