@@ -4,6 +4,7 @@ from .forms import newTweetform, editTweetform
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Tweets, Likes
+from social.models import Follower, Following
 
 
 @login_required(login_url='login')
@@ -72,7 +73,14 @@ def likers(request):
 
 @login_required(login_url='login')
 def homepage(request):
-    content = Tweets.objects.all()
+    try:
+        following = Following.objects.all().filter(
+            person=request.user).first().following.all()
+    except:
+        following = Following.objects.none()
+    content = Following.objects.none()
+    for i in following:
+        content |= Tweets.objects.all().filter(tweeter=i)
     for i in content:
         try:
             i.likes = Likes.objects.all().filter(tweet=i).first().liker.all().count
@@ -87,7 +95,17 @@ def homepage(request):
         if request.user in likers:
             flag = True
         i.liker = flag
-    return render(request, 'tweets/home.html', {'content': content})
+    x = list(content.values())
+    for i in range(len(x)):
+        x[i]['tweeter'] = content[i].tweeter
+    sorted_content = sorted(x, key=lambda k: k['tweet_time'], reverse=True)
+    content_object = []
+    from collections import namedtuple
+    for i in sorted_content:
+        object_name = namedtuple("ObjectName", i.keys())(*i.values())
+        content_object.append(object_name)
+    # print(content_object)
+    return render(request, 'tweets/home.html', {'content': content_object})
 
 
 @login_required(login_url='login')
