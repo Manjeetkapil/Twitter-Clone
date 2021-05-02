@@ -27,7 +27,10 @@ def mytweets(request):
     user = request.user
     content = Tweets.objects.all().filter(tweeter=user)
     for i in content:
-        i.likes = Likes.objects.all().filter(tweet=i).first().liker.all().count
+        try:
+            i.likes = Likes.objects.all().filter(tweet=i).first().liker.all().count
+        except:
+            i.likes = 0
     return render(request, 'tweets/mytweets.html', {'content': content})
 
 
@@ -71,9 +74,15 @@ def likers(request):
 def homepage(request):
     content = Tweets.objects.all()
     for i in content:
-        i.likes = Likes.objects.all().filter(tweet=i).first().liker.all().count
+        try:
+            i.likes = Likes.objects.all().filter(tweet=i).first().liker.all().count
+        except:
+            i.likes = 0
         tweeter = Tweets.objects.all().filter(id=i.pk).first()
-        likers = Likes.objects.all().filter(tweet=tweeter).first().liker.all()
+        try:
+            likers = Likes.objects.all().filter(tweet=tweeter).first().liker.all()
+        except:
+            likers = []
         flag = False
         if request.user in likers:
             flag = True
@@ -92,5 +101,10 @@ def like_unlike(request):
         if (likes == "True"):
             Likes.objects.all().filter(tweet=tweet).first().liker.remove(request.user)
         else:
-            Likes.objects.all().filter(tweet=tweet).first().liker.add(request.user)
+            try:
+                Likes.objects.all().filter(tweet=tweet).first().liker.add(request.user)
+            except:
+                instance = Likes.objects.create(tweet=tweet)
+                user_instance = request.user
+                instance.liker.add(*user_instance)
     return homepage(request)

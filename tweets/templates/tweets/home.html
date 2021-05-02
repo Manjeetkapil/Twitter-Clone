@@ -1,6 +1,6 @@
 <h1>Welcome {{user}}</h1>
 <a href="{%url 'logout'%}">Logout</a> <br />
-<a href="{%url 'profile'%}">Profile</a>
+<a href="{%url 'viewprofile' user%}">Profile</a>
 {%for i in content%}
 <fieldset>
   <legend><a href="{%url 'viewprofile' i.tweeter%}">{{i.tweeter}}</a></legend>

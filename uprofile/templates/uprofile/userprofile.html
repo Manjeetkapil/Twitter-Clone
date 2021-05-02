@@ -2,7 +2,7 @@
   <legend>
     <h1>{{content.first_name}} {{content.last_name}}</h1>
   </legend>
-  {% if follows%}
+  {%if puser.username != user.username%} {% if follows%}
   <form action="{%url 'follow_unfollow' puser.username%}" method="POST">
     {% csrf_token %}
     <button
@@ -26,7 +26,7 @@
       Follow
     </button>
   </form>
-  {%endif%}
+  {%endif%} {% endif %}
   <h2>{{puser.username}}</h2>
   <h2>{{puser.email}}</h2>
   <h2>{{content.intro}}</h2>

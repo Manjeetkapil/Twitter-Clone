@@ -77,6 +77,7 @@ def viewfollowing(request, username=None):
 @login_required(login_url='login')
 def follow_unfollow(request, username=None):
     username = get_object_or_404(User, username=username)
+    userset = User.objects.all().filter(username=username)
     if request.method == 'POST':
         follows = request.POST['follows']
         print(follows)
@@ -84,6 +85,15 @@ def follow_unfollow(request, username=None):
             Follower.objects.all().filter(person=username).first().follower.remove(request.user)
             Following.objects.all().filter(person=request.user).first().following.remove(username)
         else:
-            Follower.objects.all().filter(person=username).first().follower.add(request.user)
-            Following.objects.all().filter(person=request.user).first().following.add(username)
+            try:
+                Follower.objects.all().filter(person=username).first().follower.add(request.user)
+            except:
+                instance = Follower.objects.create(person=username)
+                user_instance = request.user
+                instance.follower.add(*user_instance)
+            try:
+                Following.objects.all().filter(person=request.user).first().following.add(username)
+            except:
+                instance = Following.objects.create(person=request.user)
+                instance.following.add(*userset)
     return viewprofile(request, username=username)
