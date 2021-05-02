@@ -8,24 +8,29 @@
 <div>
   {%for i in content%}
   <fieldset>
-    <legend>{{i.tweeter}}</legend>
+    <legend><a href="{%url 'viewprofile' i.tweeter%}">{{i.tweeter}}</a></legend>
     <h2>Tweet: {{i.tweet}}</h2>
-    {%if content.count is 1%}
-    <h2>Like: {{i.likes}}</h2>
-    <h2>Retweet: {{i.retweets}}</h2>
-    <h2>{{i.tweet_time}}</h2>
-    {%else%}
     <div style="text-align: center">
-      <p
-        style="
-          display: inline-block;
-          width: fit-content;
-          border-style: groove;
-          border-color: darkslateblue;
-        "
-      >
-        L:{{i.likes}}
-      </p>
+      <form action="{%url 'likers'%}" method="POST">
+        {%csrf_token%}
+        <button
+          type="submit"
+          name="tweet"
+          value="{{i.id}}"
+          style="border: none; background: none"
+        >
+          <p
+            style="
+              display: inline-block;
+              width: fit-content;
+              border-style: groove;
+              border-color: darkslateblue;
+            "
+          >
+            L:{{i.likes}}
+          </p>
+        </button>
+      </form>
       <p
         style="
           display: inline-block;
@@ -37,7 +42,7 @@
         R:{{i.retweets}}
       </p>
     </div>
-    {%endif%}
+    <h4 style="text-align: center">{{i.tweet_time}}</h4>
     <div style="text-align: center">
       <a href="{%url 'tweetdetail' i.id %}">details</a>
       <a href="{% url 'edittweet' i.id %}">edit</a>

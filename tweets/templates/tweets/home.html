@@ -1,0 +1,70 @@
+<h1>Welcome {{user}}</h1>
+<a href="{%url 'logout'%}">Logout</a> <br />
+<a href="{%url 'profile'%}">Profile</a>
+{%for i in content%}
+<fieldset>
+  <legend><a href="{%url 'viewprofile' i.tweeter%}">{{i.tweeter}}</a></legend>
+  <h2>Tweet: {{i.tweet}}</h2>
+    <div style="text-align: center">
+      <form action="{%url 'likers'%}" method="POST">
+        {%csrf_token%}
+        <button
+          type="submit"
+          name="tweet"
+          value="{{i.id}}"
+          style="border: none; background: none"
+        >
+          <p
+            style="
+              display: inline-block;
+              width: fit-content;
+              border-style: groove;
+              border-color: darkslateblue;
+            "
+          >
+            L:{{i.likes}}
+          </p>
+        </button>
+      </form>
+  {% if i.liker%}
+  <form action="{%url 'like_unlike'%}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name = "id" value = {{i.id}}/>
+    <button
+      style="border: none; background-color: rgb(133, 183, 248)"
+      type="submit"
+      name="likes"
+      value="{{i.liker}}"
+    >
+      Unlike
+    </button>
+  </form>
+  {%else%}
+  <form action="{%url 'like_unlike'%}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name = "id" value = {{i.id}}/>
+    <button
+      style="border: none"
+      type="submit"
+      name="likes"
+      value="{{i.liker}}"
+    >
+      Like
+    </button>
+  </form>
+  {%endif%}
+      <p
+        style="
+          display: inline-block;
+          width: fit-content;
+          border-style: groove;
+          border-color: darkslateblue;
+        "
+      >
+        R:{{i.retweets}}
+      </p>
+    </div>
+    <h4 style="text-align: center">{{i.tweet_time}}</h4>
+  </div>
+</fieldset>
+{%endfor%}

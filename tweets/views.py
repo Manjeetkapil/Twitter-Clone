@@ -3,7 +3,7 @@ from .forms import newTweetform, editTweetform
 # Create your views here.
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Tweets
+from .models import Tweets, Likes
 
 
 @login_required(login_url='login')
@@ -26,7 +26,8 @@ def newtweet(request):
 def mytweets(request):
     user = request.user
     content = Tweets.objects.all().filter(tweeter=user)
-    # print(content[0].tweet)
+    for i in content:
+        i.likes = Likes.objects.all().filter(tweet=i).first().liker.all().count
     return render(request, 'tweets/mytweets.html', {'content': content})
 
 
@@ -53,3 +54,43 @@ def edittweet(request, pk):
     else:
         form = newTweetform(instance=request.user)
     return render(request, 'tweets/edittweet.html', {'form': form})
+
+
+@login_required(login_url='login')
+def likers(request):
+    if request.method == 'POST':
+        tweet = request.POST['tweet']
+    else:
+        tweet = None
+    tweeter = Tweets.objects.all().filter(id=tweet).first()
+    likers = Likes.objects.all().filter(tweet=tweeter).first().liker.all()
+    return render(request, 'tweets/liker.html', {'likers': likers})
+
+
+@login_required(login_url='login')
+def homepage(request):
+    content = Tweets.objects.all()
+    for i in content:
+        i.likes = Likes.objects.all().filter(tweet=i).first().liker.all().count
+        tweeter = Tweets.objects.all().filter(id=i.pk).first()
+        likers = Likes.objects.all().filter(tweet=tweeter).first().liker.all()
+        flag = False
+        if request.user in likers:
+            flag = True
+        i.liker = flag
+    return render(request, 'tweets/home.html', {'content': content})
+
+
+@login_required(login_url='login')
+def like_unlike(request):
+    if request.method == 'POST':
+        likes = request.POST['likes']
+        id = request.POST['id']
+        s = ''.join(filter(str.isdigit, id))
+        pk = int(s)
+        tweet = Tweets.objects.all().filter(id=pk).first()
+        if (likes == "True"):
+            Likes.objects.all().filter(tweet=tweet).first().liker.remove(request.user)
+        else:
+            Likes.objects.all().filter(tweet=tweet).first().liker.add(request.user)
+    return homepage(request)

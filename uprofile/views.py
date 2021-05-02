@@ -29,11 +29,6 @@ def profile(request):
 
 
 @login_required(login_url='login')
-def homepage(request):
-    content = Tweets.objects.all()
-    return render(request, 'uprofile/home.html', {'content': content})
-
-
 def viewprofile(request, username=None):
     username = get_object_or_404(User, username=username)
     content = Profile.objects.all().filter(user=username)
@@ -57,6 +52,7 @@ def viewprofile(request, username=None):
     return render(request, 'uprofile/userprofile.html', {'content': content[0], 'puser': username, 'foer': follower_count, 'foing': following_count, 'follows': follows})
 
 
+@login_required(login_url='login')
 def viewfollower(request, username=None):
     username = get_object_or_404(User, username=username)
     getfollowers = Follower.objects.all().filter(person=username)
@@ -67,6 +63,7 @@ def viewfollower(request, username=None):
     return render(request, 'uprofile/follower.html', {'content': follower})
 
 
+@login_required(login_url='login')
 def viewfollowing(request, username=None):
     username = get_object_or_404(User, username=username)
     getfollowing = Following.objects.all().filter(person=username)
@@ -77,11 +74,13 @@ def viewfollowing(request, username=None):
     return render(request, 'uprofile/follower.html', {'content': following})
 
 
+@login_required(login_url='login')
 def follow_unfollow(request, username=None):
     username = get_object_or_404(User, username=username)
     if request.method == 'POST':
         follows = request.POST['follows']
-        if follows == True:
+        print(follows)
+        if (follows == "True"):
             Follower.objects.all().filter(person=username).first().follower.remove(request.user)
             Following.objects.all().filter(person=request.user).first().following.remove(username)
         else:

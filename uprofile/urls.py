@@ -4,7 +4,6 @@ from uprofile import views as profile_view
 
 urlpatterns = [
     path('profile/', profile_view.profile, name='profile'),
-    path('', profile_view.homepage, name='home'),
     path('profile/<slug:username>/',
          profile_view.viewprofile, name='viewprofile'),
     path('profile/follower/<slug:username>/',

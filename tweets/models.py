@@ -19,3 +19,9 @@ class Comments(models.Model):
     comment_time = models.DateTimeField(default=datetime.now, blank=True)
     retweets = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
+
+
+class Likes(models.Model):
+    tweet = models.OneToOneField(
+        Tweets, on_delete=models.CASCADE, related_name='whotweeted')
+    liker = models.ManyToManyField(User, related_name='liker', blank=True)
