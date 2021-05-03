@@ -8,7 +8,8 @@ class Tweets(models.Model):
     tweeter = models.ForeignKey(User, on_delete=models.CASCADE)
     tweet = models.CharField(max_length=10000)
     tweet_time = models.DateTimeField(default=datetime.now, blank=True)
-    retweets = models.IntegerField(default=0)
+    retweeted = models.ManyToManyField(
+        User, related_name='retweeter', blank=True)
     likes = models.IntegerField(default=0)
 
 

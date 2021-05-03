@@ -1,8 +1,9 @@
 <h1>Welcome {{user}}</h1>
 <a href="{%url 'logout'%}">Logout</a> <br />
-<a href="{%url 'viewprofile' user%}">Profile</a>
+<a href="{%url 'viewprofile' user%}">Profile</a> <br>
+<a href="{%url 'mytweets' user%}">Tweets</a>
 {%for i in content%}
-<fieldset>
+<fieldset style="background-color: beige;">
   <legend><a href="{%url 'viewprofile' i.tweeter%}">{{i.tweeter}}</a></legend>
   <h2>Tweet: {{i.tweet}}</h2>
     <div style="text-align: center">
@@ -53,16 +54,33 @@
     </button>
   </form>
   {%endif%}
-      <p
-        style="
-          display: inline-block;
-          width: fit-content;
-          border-style: groove;
-          border-color: darkslateblue;
-        "
-      >
+  {% if i.retweeter%}
+  <form action="{%url 'retweet'%}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name = "id" value = {{i.id}}/>
+    <button
+      style="border: none; background-color: rgb(133, 183, 248)"
+      type="submit"
+      name="retweeted"
+      value="{{i.retweeter}}"
+    >
         R:{{i.retweets}}
-      </p>
+    </button>
+  </form>
+  {%else%}
+  <form action="{%url 'retweet'%}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name = "id" value = {{i.id}}/>
+    <button
+      style="border: none"
+      type="submit"
+      name="retweeted"
+      value="{{i.retweeter}}"
+    >
+        R:{{i.retweets}}
+    </button>
+  </form>
+  {%endif%}
     </div>
     <h4 style="text-align: center">{{i.tweet_time}}</h4>
   </div>

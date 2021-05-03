@@ -1,15 +1,17 @@
-{%if content.count is 1%}
-<h1 style="text-align: center">
-  Yout Tweet at {%for i in content%} {{i.tweet_time}} {%endfor%}
-</h1>
-{%else%}
-<h1 style="text-align: center">Your Tweets</h1>
-{%endif%}
-<div>
-  {%for i in content%}
-  <fieldset>
-    <legend><a href="{%url 'viewprofile' i.tweeter%}">{{i.tweeter}}</a></legend>
-    <h2>Tweet: {{i.tweet}}</h2>
+<h1>Welcome {{user}}</h1>
+<a href="{%url 'logout'%}">Logout</a> <br />
+<a href="{%url 'viewprofile' user%}">Profile</a><br>
+<a href="{%url 'home'%}">Home</a>
+<div style="border-style: solid; background-color: beige; text-align: center">
+  add new tweet <a href="{%url 'newtweet'%}">here</a>
+</div>
+{%for i in content%}
+<fieldset style="background-color: beige;">
+  <legend><a href="{%url 'viewprofile' i.tweeter%}">{{i.tweeter}}</a></legend>
+  {%if i.tweeter != username%}
+  <h2>Retweeted from <a href="{%url 'viewprofile' user%}">{{i.tweeter}}</a></h2>
+  {%endif%}
+  <h2>Tweet: {{i.tweet}}</h2>
     <div style="text-align: center">
       <form action="{%url 'likers'%}" method="POST">
         {%csrf_token%}
@@ -31,30 +33,73 @@
           </p>
         </button>
       </form>
-      <p
-        style="
-          display: inline-block;
-          width: fit-content;
-          border-style: groove;
-          border-color: darkslateblue;
-        "
-      >
+  {% if i.liker%}
+  <form action="{%url 'like_unlike'%}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name = "id" value = {{i.id}}/>
+    <button
+      style="border: none; background-color: rgb(133, 183, 248)"
+      type="submit"
+      name="likes"
+      value="{{i.liker}}"
+    >
+      Unlike
+    </button>
+  </form>
+  {%else%}
+  <form action="{%url 'like_unlike'%}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name = "id" value = {{i.id}}/>
+    <button
+      style="border: none"
+      type="submit"
+      name="likes"
+      value="{{i.liker}}"
+    >
+      Like
+    </button>
+  </form>
+  {%endif%}
+       {% if i.retweeter%}
+  <form action="{%url 'retweet'%}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name = "id" value = {{i.id}}/>
+    <button
+      style="border: none; background-color: rgb(133, 183, 248)"
+      type="submit"
+      name="retweeted"
+      value="{{i.retweeter}}"
+    >
         R:{{i.retweets}}
-      </p>
+    </button>
+  </form>
+  {%else%}
+  <form action="{%url 'retweet'%}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name = "id" value = {{i.id}}/>
+    <button
+      style="border: none"
+      type="submit"
+      name="retweeted"
+      value="{{i.retweeter}}"
+    >
+        R:{{i.retweets}}
+    </button>
+  </form>
+  {%endif%}
     </div>
     <h4 style="text-align: center">{{i.tweet_time}}</h4>
     <div style="text-align: center">
       <a href="{%url 'tweetdetail' i.id %}">details</a>
+      {%if i.tweeter == user%}
       <a href="{% url 'edittweet' i.id %}">edit</a>
+      {%endif%}
     </div>
-  </fieldset>
-  {% endfor %}
-</div>
+  </div>
+</fieldset>
+{%endfor%}
 <div>
   {% if messages %} {% for message in messages %}
   <div>{{message}}</div>
   {% endfor %} {% endif %}
-</div>
-<div style="border-style: solid; background-color: beige; text-align: center">
-  add new tweet <a href="{%url 'newtweet'%}">here</a>
 </div>

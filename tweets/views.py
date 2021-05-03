@@ -4,7 +4,10 @@ from .forms import newTweetform, editTweetform
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Tweets, Likes
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from social.models import Follower, Following
+from django.http import HttpResponseRedirect
 
 
 @login_required(login_url='login')
@@ -24,21 +27,59 @@ def newtweet(request):
 
 
 @login_required(login_url='login')
-def mytweets(request):
-    user = request.user
-    content = Tweets.objects.all().filter(tweeter=user)
-    for i in content:
+def mytweets(request, username=None):
+    username = get_object_or_404(User, username=username)
+    content = Tweets.objects.all().filter(tweeter=username)
+    all_tweets = Tweets.objects.all()
+    for i in all_tweets:
         try:
-            i.likes = Likes.objects.all().filter(tweet=i).first().liker.all().count
+            retweeters = i.retweeted.all()
+            if username in retweeters:
+                content |= Tweets.objects.all().filter(id=i.id)
         except:
-            i.likes = 0
-    return render(request, 'tweets/mytweets.html', {'content': content})
+            pass
+    x = list(content.values())
+    for i in range(len(x)):
+        x[i]['tweeter'] = content[i].tweeter
+        try:
+            x[i]['likes'] = Likes.objects.all().filter(
+                tweet=content[i]).first().liker.all().count
+        except:
+            x[i]['likes'] = 0
+        try:
+            x[i]['retweets'] = content[i].retweeted.all().count
+        except:
+            x[i]['retweets'] = 0
+        try:
+            retweeter = content[i].retweeted.all()
+        except:
+            retweeter = content[i].retweeted.none()
+        rflag = False
+        if request.user in retweeter:
+            rflag = True
+        x[i]['retweeter'] = rflag
+        tweeter = Tweets.objects.all().filter(id=x[i]['id']).first()
+        try:
+            likers = Likes.objects.all().filter(tweet=tweeter).first().liker.all()
+        except:
+            likers = []
+        flag = False
+        if request.user in likers:
+            flag = True
+        x[i]['liker'] = flag
+    sorted_content = sorted(x, key=lambda k: k['tweet_time'], reverse=True)
+    content_object = []
+    from collections import namedtuple
+    for i in sorted_content:
+        object_name = namedtuple("Object", i.keys())(*i.values())
+        content_object.append(object_name)
+    print(content_object)
+    return render(request, 'tweets/mytweets.html', {'content': content_object, 'username': username})
 
 
 @login_required(login_url='login')
 def spetweet(request, pk):
-    user = request.user
-    content = Tweets.objects.filter(id=pk, tweeter=user)
+    content = Tweets.objects.filter(id=pk)
     # print(content[0].tweet_time)
     return render(request, 'tweets/mytweets.html', {'content': content})
 
@@ -95,8 +136,21 @@ def homepage(request):
     #     if request.user in likers:
     #         flag = True
     #     i.liker = flag
+    print(vars(content[0]))
     x = list(content.values())
     for i in range(len(x)):
+        try:
+            x[i]['retweets'] = content[i].retweeted.all().count
+        except:
+            x[i]['retweets'] = 0
+        try:
+            retweeter = content[i].retweeted.all()
+        except:
+            retweeter = content[i].retweeted.none()
+        rflag = False
+        if request.user in retweeter:
+            rflag = True
+        x[i]['retweeter'] = rflag
         x[i]['tweeter'] = content[i].tweeter
         try:
             x[i]['likes'] = Likes.objects.all().filter(
@@ -139,4 +193,21 @@ def like_unlike(request):
                 instance = Likes.objects.create(tweet=tweet)
                 user_instance = request.user
                 instance.liker.add(*user_instance)
-    return homepage(request)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+def retweet(request):
+    if request.method == 'POST':
+        _retweeted = request.POST['retweeted']
+        id = request.POST['id']
+        s = ''.join(filter(str.isdigit, id))
+        pk = int(s)
+        tweet = Tweets.objects.all().filter(id=pk).first()
+        if (_retweeted == "True"):
+            tweet.retweeted.remove(request.user)
+        else:
+            try:
+                tweet.retweeted.add(request.user)
+            except:
+                pass
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
