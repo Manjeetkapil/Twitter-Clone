@@ -28,7 +28,7 @@ def profile(request):
     return render(request, 'uprofile/profile.html', context)
 
 
-@login_required(login_url='login')
+# @login_required(login_url='login')
 def viewprofile(request, username=None):
     username = get_object_or_404(User, username=username)
     content = Profile.objects.all().filter(user=username)

@@ -81,12 +81,29 @@ def homepage(request):
     content = Following.objects.none()
     for i in following:
         content |= Tweets.objects.all().filter(tweeter=i)
-    for i in content:
+    # for i in content:
+    #     try:
+    #         i.likes = Likes.objects.all().filter(tweet=i).first().liker.all().count
+    #     except:
+    #         i.likes = 0
+    #     tweeter = Tweets.objects.all().filter(id=i.pk).first()
+    #     try:
+    #         likers = Likes.objects.all().filter(tweet=tweeter).first().liker.all()
+    #     except:
+    #         likers = []
+    #     flag = False
+    #     if request.user in likers:
+    #         flag = True
+    #     i.liker = flag
+    x = list(content.values())
+    for i in range(len(x)):
+        x[i]['tweeter'] = content[i].tweeter
         try:
-            i.likes = Likes.objects.all().filter(tweet=i).first().liker.all().count
+            x[i]['likes'] = Likes.objects.all().filter(
+                tweet=content[i]).first().liker.all().count
         except:
-            i.likes = 0
-        tweeter = Tweets.objects.all().filter(id=i.pk).first()
+            x[i]['likes'] = 0
+        tweeter = Tweets.objects.all().filter(id=x[i]['id']).first()
         try:
             likers = Likes.objects.all().filter(tweet=tweeter).first().liker.all()
         except:
@@ -94,10 +111,7 @@ def homepage(request):
         flag = False
         if request.user in likers:
             flag = True
-        i.liker = flag
-    x = list(content.values())
-    for i in range(len(x)):
-        x[i]['tweeter'] = content[i].tweeter
+        x[i]['liker'] = flag
     sorted_content = sorted(x, key=lambda k: k['tweet_time'], reverse=True)
     content_object = []
     from collections import namedtuple
