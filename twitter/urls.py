@@ -21,4 +21,5 @@ urlpatterns = [
     path('', include('authenticate.urls')),
     path('', include('uprofile.urls')),
     path('', include('tweets.urls')),
+    path('chat/', include('chat.urls')),
 ]
