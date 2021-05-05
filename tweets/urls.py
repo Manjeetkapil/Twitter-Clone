@@ -10,5 +10,6 @@ urlpatterns = [
     path('tweet/likers', tweets_view.likers, name='likers'),
     path('', tweets_view.homepage, name='home'),
     path('like_unlike/', tweets_view.like_unlike, name='like_unlike'),
-    path('retweet/', tweets_view.retweet, name='retweet')
+    path('retweet/', tweets_view.retweet, name='retweet'),
+    path('comment/<pk>', tweets_view.newcomment, name='comment')
 ]

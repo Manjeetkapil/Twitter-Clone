@@ -14,12 +14,17 @@ class Tweets(models.Model):
 
 
 class Comments(models.Model):
-    tweet = models.ForeignKey(Tweets, on_delete=models.CASCADE)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    comment = models.CharField(max_length=1000)
-    comment_time = models.DateTimeField(default=datetime.now, blank=True)
-    retweets = models.IntegerField(default=0)
-    likes = models.IntegerField(default=0)
+    main_tweet = models.OneToOneField(
+        Tweets, on_delete=models.CASCADE, related_name='maintweet', default=None)
+    your_tweet = models.ManyToManyField(
+        Tweets, related_name='comment', blank=True, default=None)
+
+
+class Commentsrel(models.Model):
+    commented_tweet = models.ForeignKey(
+        Tweets, on_delete=models.CASCADE, related_name="commentedtweet")
+    parent_tweet = models.ForeignKey(
+        Tweets, on_delete=models.CASCADE, blank=True)
 
 
 class Likes(models.Model):
