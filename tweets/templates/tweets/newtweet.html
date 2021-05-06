@@ -3,8 +3,9 @@
     {% csrf_token %}
     <fieldset>
       <legend>Add new Tweet</legend>
-
       {{form.as_p}}
+      <div id="textarea" contenteditable>I look like textarea</div>
+      <div id="users"></div>
     </fieldset>
     <div>
       <button>Submit</button>
@@ -17,3 +18,52 @@
   {% endfor %} {% endif %}
 </div>
 <fieldset>See Your tweets <a href="{%url 'mytweets' user%}">here</a></fieldset>
+<script type="text/javascript">
+  window.onload = function () {
+    document.getElementById("tweet").onkeyup = function () {
+      var x = document.getElementById("tweet");
+      var res = x.value.split(" ");
+      var wes = res[res.length - 1];
+      if (wes.startsWith("@")) {
+        // res[res.length - 1] = "admin";
+        var data = JSON.parse("{{data|escapejs}}");
+        wes = wes.replace(/@/g, "");
+        wes = wes.toLowerCase();
+        var datalist = data["fools"];
+        result = [];
+        for (var i = 0; i < datalist.length; i++) {
+          var keyword = datalist[i].toLowerCase();
+          if (keyword.includes(wes)) {
+            result.push(datalist[i]);
+          }
+        }
+        // console.log(result);
+        var list = "<ul class=" + '"list-unstyled"' + ">";
+        if (result.length > 0) {
+          for (var i = 0; i < result.length; i++) {
+            list = list + '<li onclick = "pickup(this)">' + result[i] + "</li>";
+          }
+        } else {
+          list = list + "<li>" + "No user" + "</li>";
+        }
+        list = list + "</ul>";
+        console.log(list);
+        document.getElementById("users").innerHTML = list;
+      } else {
+        document.getElementById("users").innerHTML = "";
+      }
+    };
+  };
+  function pickup(id) {
+    // console.log(document.getElementById("tweet").innerHTML);
+    var x = '<a href="' + id.innerHTML + '">' + id.innerHTML + "</a>";
+    console.log(x);
+    document.getElementById("tweet").value = document
+      .getElementById("tweet")
+      .value.replace(/@/g, "");
+    document.getElementById("tweet").value =
+      document.getElementById("tweet").value + x;
+    // console.log(id.innerHTML);
+    // console.log(document.getElementById("tweet").innerHTML);
+  }
+</script>

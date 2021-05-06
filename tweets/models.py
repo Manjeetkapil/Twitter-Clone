@@ -2,6 +2,7 @@ from django.db import models
 from datetime import datetime
 # Create your models here.
 from django.contrib.auth.models import User
+from ckeditor.fields import RichTextField
 
 
 class Tweets(models.Model):

@@ -11,7 +11,7 @@
   {%if i.tweeter != username%}
   <h2>Retweeted from <a href="{%url 'viewprofile' user%}">{{i.tweeter}}</a></h2>
   {%endif%}
-  <h2>Tweet: {{i.tweet}}</h2>
+  <h2>Tweet: {{i.tweet | safe}}</h2>
     <div style="text-align: center">
       <form action="{%url 'likers'%}" method="POST">
         {%csrf_token%}

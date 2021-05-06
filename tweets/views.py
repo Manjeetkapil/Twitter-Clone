@@ -10,12 +10,14 @@ from social.models import Follower, Following
 from .models import Comments, Commentsrel
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from json import dumps
 
 
 @login_required(login_url='login')
 def newtweet(request):
     if request.method == 'POST':
-        form = newTweetform(request.POST)
+        form = newTweetform(request.POST, auto_id=True)
+        print(form)
         if form.is_valid():
             tweet = form.save(commit=False)
             tweet.tweeter = request.user
@@ -24,8 +26,14 @@ def newtweet(request):
                 request, f'Tweeted Succesfully for {request.user.username}!')
         return redirect('newtweet')
     else:
-        form = newTweetform(instance=request.user)
-    return render(request, 'tweets/newtweet.html', {'form': form})
+        form = newTweetform(instance=request.user, auto_id=True)
+    print(form)
+    fools = []
+    for i in User.objects.all():
+        fools.append(i.username)
+    fool = {'fools': fools}
+    dataJSON = dumps(fool)
+    return render(request, 'tweets/newtweet.html', {'form': form, 'data': dataJSON})
 
 
 @login_required(login_url='login')
@@ -176,7 +184,10 @@ def likers(request):
     else:
         tweet = None
     tweeter = Tweets.objects.all().filter(id=tweet).first()
-    likers = Likes.objects.all().filter(tweet=tweeter).first().liker.all()
+    try:
+        likers = Likes.objects.all().filter(tweet=tweeter).first().liker.all()
+    except:
+        likers = []
     return render(request, 'tweets/liker.html', {'likers': likers})
 
 

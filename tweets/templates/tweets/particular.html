@@ -4,7 +4,7 @@
 <a href="{%url 'mytweets' user%}">Tweets</a>
 <fieldset style="background-color: beige;" class="mt-3">
       <legend><a href="">{{content.tweeter}}</a></legend>
-      <h2>Tweet: {{content.tweet}}</h2>
+      <h2>Tweet: {{content.tweet | safe}}</h2>
         <div style="text-align: center">
           <form action="{%url 'likers'%}" method="POST">
             {%csrf_token%}
@@ -100,7 +100,7 @@
         {%for i in comment%}
         <fieldset style="background-color: beige;" class="mt-3">
       <legend><a href="{%url 'viewprofile' i.tweeter%}">{{i.tweeter}}</a></legend>
-      <h2>Tweet: {{i.tweet}}</h2>
+      <h2>Tweet: {{i.tweet | safe}}</h2>
         <div style="text-align: center">
           <form action="{%url 'likers'%}" method="POST">
             {%csrf_token%}
