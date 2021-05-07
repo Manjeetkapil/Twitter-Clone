@@ -1,14 +1,28 @@
+{% extends "base.html" %} {% block content %}
 <div>
-  <form method="POST">
+  <form method="POST" onsubmit=" return getall()">
     {% csrf_token %}
     <fieldset>
-      <legend>Add new Tweet</legend>
-      {{form.as_p}}
-      <div id="textarea" contenteditable>I look like textarea</div>
-      <div id="users"></div>
+      <ul style="display: none">
+        {{form.as_p}}
+      </ul>
+      Tweet:
+      <div
+        class="form-control"
+        style="
+          border: 2px inset #aaa;
+          cursor: text;
+          height: 220px;
+          overflow: auto;
+          width: 400px;
+        "
+        id="textarea"
+        contenteditable
+      ></div>
+      <div style="width: 400px" id="users"></div>
     </fieldset>
     <div>
-      <button>Submit</button>
+      <button class="btn btn-sm btn-dark mt-1">Submit</button>
     </div>
   </form>
 </div>
@@ -20,12 +34,11 @@
 <fieldset>See Your tweets <a href="{%url 'mytweets' user%}">here</a></fieldset>
 <script type="text/javascript">
   window.onload = function () {
-    document.getElementById("tweet").onkeyup = function () {
-      var x = document.getElementById("tweet");
-      var res = x.value.split(" ");
+    document.getElementById("textarea").onkeyup = function () {
+      var x = document.getElementById("textarea");
+      var res = x.innerHTML.split(" ");
       var wes = res[res.length - 1];
       if (wes.startsWith("@")) {
-        // res[res.length - 1] = "admin";
         var data = JSON.parse("{{data|escapejs}}");
         wes = wes.replace(/@/g, "");
         wes = wes.toLowerCase();
@@ -37,33 +50,43 @@
             result.push(datalist[i]);
           }
         }
-        // console.log(result);
-        var list = "<ul class=" + '"list-unstyled"' + ">";
+        var list = "<ul class=" + '"list-group"' + ">";
         if (result.length > 0) {
           for (var i = 0; i < result.length; i++) {
-            list = list + '<li onclick = "pickup(this)">' + result[i] + "</li>";
+            list =
+              list +
+              '<li class="list-group-item" onclick = "pickup(this)">' +
+              result[i] +
+              "</li>";
           }
         } else {
-          list = list + "<li>" + "No user" + "</li>";
+          list = list + '<li class="list-group-item">' + "No user" + "</li>";
         }
         list = list + "</ul>";
-        console.log(list);
         document.getElementById("users").innerHTML = list;
       } else {
         document.getElementById("users").innerHTML = "";
       }
+      var x = document.getElementById("tweet");
+      x.value = document.getElementById("textarea").innerHTML;
     };
   };
   function pickup(id) {
-    // console.log(document.getElementById("tweet").innerHTML);
-    var x = '<a href="' + id.innerHTML + '">' + id.innerHTML + "</a>";
-    console.log(x);
-    document.getElementById("tweet").value = document
-      .getElementById("tweet")
-      .value.replace(/@/g, "");
-    document.getElementById("tweet").value =
-      document.getElementById("tweet").value + x;
-    // console.log(id.innerHTML);
-    // console.log(document.getElementById("tweet").innerHTML);
+    var x =
+      '<a href="/profile/' + id.innerHTML + '/">' + "@" + id.innerHTML + "</a>";
+    var y = document.getElementById("textarea");
+    var res = y.innerHTML.split(" ");
+    res[res.length - 1] = x;
+    document.getElementById("textarea").innerHTML = res.join(" ");
+  }
+  function getall() {
+    // var y = document.getElementById("textarea").innerHTML;
+    // if (y == "") {
+    //   alert("Empty message!");
+    //   return flase;
+    // }
+    var x = document.getElementById("tweet");
+    x.value = document.getElementById("textarea").innerHTML;
   }
 </script>
+{% endblock content %}
