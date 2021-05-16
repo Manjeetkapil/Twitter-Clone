@@ -40,7 +40,7 @@ def newtweet(request):
 def newcomment(request, pk):
     parent_tweet = Tweets.objects.all().filter(id=pk).first()
     if request.method == 'POST':
-        form = newTweetform(request.POST)
+        form = newTweetform(request.POST, auto_id=True)
         if form.is_valid():
             tweet = form.save(commit=False)
             tweet.tweeter = request.user
@@ -60,8 +60,13 @@ def newcomment(request, pk):
                 request, f'Tweeted Succesfully for {request.user.username}!')
         return redirect('tweetdetail', pk)
     else:
-        form = newTweetform(instance=request.user)
-    return render(request, 'tweets/newtweet.html', {'form': form})
+        form = newTweetform(instance=request.user, auto_id=True)
+    fools = []
+    for i in User.objects.all():
+        fools.append(i.username)
+    fool = {'fools': fools}
+    dataJSON = dumps(fool)
+    return render(request, 'tweets/newtweet.html', {'form': form, 'data': dataJSON})
 
 
 @login_required(login_url='login')

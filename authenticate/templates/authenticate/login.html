@@ -1,18 +1,30 @@
+{% extends "base.html" %} {% block content %}
 <div>
   {% if messages %} {% for message in messages %}
   <div>{{message}}</div>
   {% endfor %} {% endif %}
 </div>
-<div class="something">
+{%if user%}
+<div class="container">
+  Already logged in click
+  <a class="btn btn-success btn-sm" href="{%url 'home'%}">here </a> to see your
+  tweets.
+</div>
+{%else%}
+<div class="container">
   <form method="POST">
     {% csrf_token %}
-    <fieldset class="df">
+    <fieldset class="form-control">
       <legend>Join Today</legend>
       {{form.as_p}}
     </fieldset>
     <div>
-      <button>Log In</button>
+      <button class="btn btn-warning">Log In</button>
     </div>
   </form>
-  <div>Need an account? <a href="{% url 'register' %}">Sign Up Now</a></div>
+  <div>
+    Need an account?
+    <a class="btn btn-success" href="{% url 'register' %}">Sign Up Now</a>
+  </div>
 </div>
+{%endif%} {% endblock content %}

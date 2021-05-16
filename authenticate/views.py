@@ -15,6 +15,7 @@ def register(request):
             return redirect('login')
     else:
         form = UserRegisterForm()
+    print(form)
     return render(request, 'authenticate/register.html', {'form': form})
 
 # second way without loginview

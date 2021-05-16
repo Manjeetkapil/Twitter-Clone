@@ -1,4 +1,4 @@
-please fuck of
+{% extends "base.html" %} {% block content %}
 <div>
   {% if messages %} {% for message in messages %}
   <div>{{message}}</div>
@@ -9,4 +9,4 @@ please fuck of
   <div>Excuse me brother how are you</div>
   {% endif %}
 </div>
-Login again <a href="{% url 'login'%}">here</a>
+Login again <a href="{% url 'login'%}">here</a> {% endblock content %}
