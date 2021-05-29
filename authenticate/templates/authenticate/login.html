@@ -4,13 +4,6 @@
   <div>{{message}}</div>
   {% endfor %} {% endif %}
 </div>
-{%if user%}
-<div class="container">
-  Already logged in click
-  <a class="btn btn-success btn-sm" href="{%url 'home'%}">here </a> to see your
-  tweets.
-</div>
-{%else%}
 <div class="container">
   <form method="POST">
     {% csrf_token %}
@@ -27,4 +20,4 @@
     <a class="btn btn-success" href="{% url 'register' %}">Sign Up Now</a>
   </div>
 </div>
-{%endif%} {% endblock content %}
+{% endblock content %}
