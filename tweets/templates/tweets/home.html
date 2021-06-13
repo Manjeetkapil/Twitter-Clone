@@ -10,88 +10,100 @@
 <a href="{%url 'logout'%}">Logout</a> <br />
 <a href="{%url 'viewprofile' user%}">Profile</a> <br />
 <a href="{%url 'mytweets' user%}">Tweets</a> -->
-{%for i in content%}
-<div class="card mt-3" onclick="location.href='{%url 'tweetdetail' i.id %}'">
-  <div class="card-body">
-    <h5 class="card-title" style="width: fit-content">
-      <a
-        style="color: black; text-decoration: none"
-        href="{%url 'viewprofile' i.tweeter%}"
-        >{{i.tweeter}}</a
-      >
-    </h5>
-    <p class="card-text">{{i.tweet}}</p>
-    <div class="row">
-      <div class="col-md-3 sm-3 text-center">
-        <form action="{%url 'comment' i.id%}">
-          <button class="btn btn-light" type="submit">
-            Comment: {%if i.comments%} {{i.comments|length}} {%else%} 0
-            {%endif%}
-          </button>
-        </form>
-      </div>
-      <div class="col-md-3 sm-3 text-center">
-        <form action="{%url 'likers'%}" method="POST">
-          {%csrf_token%}
-          <button
-            class="btn btn-link"
-            type="submit"
-            value="{{i.id}}"
-            name="tweet"
-          >
-            L:{{i.likes}}
-          </button>
-        </form>
-      </div>
+<div class="container">
+  {%for i in content%}
+  <div
+    class="card mt-3 border border-success"
+    onclick="location.href='{%url 'tweetdetail' i.id %}'"
+    style="background-color: whitesmoke"
+  >
+    <div class="card-body">
+      <h5 class="card-title" style="width: fit-content">
+        <a
+          style="color: black; text-decoration: none"
+          href="{%url 'viewprofile' i.tweeter%}"
+          >{{i.tweeter}}</a
+        >
+      </h5>
+      <hr />
+      <p class="card-text">{{i.tweet| safe}}</p>
+      <div class="card-footer text-muted" style="background-color: white">
+        <div class="row">
+          <div class="col-md-3 sm-3 text-center">
+            <form action="{%url 'comment' i.id%}">
+              <button
+                class="btn"
+                type="submit"
+                style="background-color: whitesmoke"
+              >
+                Comment: {%if i.comments%} {{i.comments|length}} {%else%} 0
+                {%endif%}
+              </button>
+            </form>
+          </div>
+          <div class="col-md-3 sm-3 text-center">
+            <form action="{%url 'likers'%}" method="POST">
+              {%csrf_token%}
+              <button
+                class="btn btn-light"
+                type="submit"
+                value="{{i.id}}"
+                name="tweet"
+              >
+                L:{{i.likes}}
+              </button>
+            </form>
+          </div>
 
-      {% if i.liker%}
-      <div class="col-md-3 sm-3 text-center">
-        <form action="{%url 'like_unlike'%}" method="POST">
-          {% csrf_token %}
-          <input type="hidden" name="id" value="{{i.id}}" />
-          <button
-            class="btn btn-success btn-sm"
-            type="submit"
-            name="likes"
-            value="{{i.liker}}"
-          >
-            Unlike
-          </button>
-        </form>
-      </div>
+          {% if i.liker%}
+          <div class="col-md-3 sm-3 text-center">
+            <form action="{%url 'like_unlike'%}" method="POST">
+              {% csrf_token %}
+              <input type="hidden" name="id" value="{{i.id}}" />
+              <button
+                class="btn btn-outline-success btn-sm"
+                type="submit"
+                name="likes"
+                value="{{i.liker}}"
+              >
+                Unlike
+              </button>
+            </form>
+          </div>
 
-      {%else%}
-      <div class="col-md-3 sm-3 text-center">
-        <form action="{%url 'like_unlike'%}" method="POST">
-          {% csrf_token %}
-          <input type="hidden" name="id" value="{{i.id}}" />
-          <button
-            class="btn btn-info btn-sm"
-            type="submit"
-            name="likes"
-            value="{{i.liker}}"
-          >
-            Like
-          </button>
-        </form>
-      </div>
-      {%endif%}
-      <div class="col-md-3 sm-3 text-center">
-        <form action="{%url 'retweet'%}" method="POST">
-          {% csrf_token %}
-          <input type="hidden" name="id" value="{{i.id}}" />
-          <button
-            class="btn btn-link"
-            type="submit"
-            name="retweeted"
-            value="{{i.retweeter}}"
-          >
-            R:{{i.retweets}}
-          </button>
-        </form>
+          {%else%}
+          <div class="col-md-3 sm-3 text-center">
+            <form action="{%url 'like_unlike'%}" method="POST">
+              {% csrf_token %}
+              <input type="hidden" name="id" value="{{i.id}}" />
+              <button
+                class="btn btn-outline-info btn-sm"
+                type="submit"
+                name="likes"
+                value="{{i.liker}}"
+              >
+                Like
+              </button>
+            </form>
+          </div>
+          {%endif%}
+          <div class="col-md-3 sm-3 text-center">
+            <form action="{%url 'retweet'%}" method="POST">
+              {% csrf_token %}
+              <input type="hidden" name="id" value="{{i.id}}" />
+              <button
+                class="btn btn-light"
+                type="submit"
+                name="retweeted"
+                value="{{i.retweeter}}"
+              >
+                R:{{i.retweets}}
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+  {%endfor%} {% endblock content %}
 </div>
-
-{%endfor%} {% endblock content %}
