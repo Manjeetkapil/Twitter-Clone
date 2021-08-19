@@ -33,8 +33,11 @@
   <h2>{{content.age}}</h2>
   <a href="{%url 'follower' puser.username%}">Followers</a> : {{foer}}
   <a href="{%url 'following' puser.username%}">Following</a> : {{foing}}
-  <br />
-  {%if puser.username == user.username %}
-  <h2>Edit <a href="{%url 'profile' %}">here</a></h2>
-  {% endif %}
+  <div>
+    {%if puser.username == user.username %}
+    <h2><a href="{%url 'profile' %}">Edit</a></h2>
+    {% endif %} {%if puser.username != user.username %}
+    <h2><a href="{%url 'room' chat %}">chat</a></h2>
+    {% endif %}
+  </div>
 </fieldset>

@@ -49,7 +49,14 @@ def viewprofile(request, username=None):
     follows = False
     if request.user in follower:
         follows = True
-    return render(request, 'uprofile/userprofile.html', {'content': content[0], 'puser': username, 'foer': follower_count, 'foing': following_count, 'follows': follows})
+    first = ''
+    for i in username.username:
+        first = first + f'{ord(i)}'
+    second = ''
+    for i in request.user.username:
+        second = second + f'{ord(i)}'
+    chat = int(first) + int(second)
+    return render(request, 'uprofile/userprofile.html', {'content': content[0], 'puser': username, 'foer': follower_count, 'foing': following_count, 'follows': follows, 'chat': chat})
 
 
 @login_required(login_url='login')
